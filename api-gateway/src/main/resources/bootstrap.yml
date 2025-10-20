@@ -1,0 +1,47 @@
+#server:
+#  port: 8080
+#
+#spring:
+#  application:
+#    name: api-gateway
+#  cloud:
+#    gateway:
+#      discovery:
+#        locator:
+#          enabled: true
+#      routes:
+#        - id: staff-service
+#          uri: lb://staff-service  # Load balancer via Eureka
+#          predicates:
+#            - Path=/api/staff/**
+#          filters:
+#            - CircuitBreaker=staffCircuitBreaker
+#        - id: order-service
+#          uri: lb://order-service
+#          predicates:
+#            - Path=/api/orders/**
+#          filters:
+#            - CircuitBreaker=orderCircuitBreaker
+#            - name: RequestRateLimiter
+#              args:
+#                redis-rate-limiter.replenishRate: 10
+#                redis-rate-limiter.burstCapacity: 20
+#        - id: distributor-service
+#          uri: lb://distributor-service
+#          predicates:
+#            - Path=/api/distribute/**
+#      default-filters:
+#        - name: Hystrix
+#          args:
+#            fallbackUri: forward:/fallback
+#
+#hystrix:
+#  command:
+#    default:
+#      execution.isolation.thread.timeoutInMilliseconds: 5000
+#
+#management:
+#  endpoints:
+#    web:
+#      exposure:
+#        include: "*"

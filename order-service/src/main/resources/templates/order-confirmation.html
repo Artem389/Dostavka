@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Заказ принят! - FoodExpress</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body class="bg-light">
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-7">
+            <div class="confirmation-card text-center">
+                <img src="https://i.imgur.com/Q2yAgA2.png" width="120" class="mb-4" alt="Success">
+                <h2 class="fw-bold mb-3">Спасибо за ваш заказ!</h2>
+                <p class="text-muted">Ваш заказ <strong th:text="'#' + ${order.id}"></strong> успешно принят и уже готовится. Мы уведомим вас, когда курьер будет в пути.</p>
+                <hr class="my-4">
+                <h5>Детали заказа:</h5>
+                <p>Адрес доставки:</p>
+                <p>Район: <span th:text="${order.district}"></span></p>
+                <p>Улица: <span th:text="${order.street}"></span></p>
+                <p>Дом: <span th:text="${order.house}"></span></p>
+                <p>Адрес ресторана:</p>
+                <p>Район: <span th:text="${order.items[0].product.restaurant.district}"></span></p>
+                <p>Улица: <span th:text="${order.items[0].product.restaurant.street}"></span></p>
+                <p>Дом: <span th:text="${order.items[0].product.restaurant.house}"></span></p>
+                <p><strong>Сумма к оплате:</strong> <span th:text="${order.totalAmount} + ' ₽'"></span></p>
+                <a href="/" class="btn btn-primary mt-3">Вернуться в меню</a>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

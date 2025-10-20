@@ -1,0 +1,148 @@
+.hero-section {
+    background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1504674900247-0877df9cc836?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
+    background-size: cover;
+    background-position: center;
+    color: white;
+    padding: 80px 0;
+}
+
+.card {
+    border: none;
+    border-radius: 15px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1) !important;
+}
+
+.table-hover tbody tr:hover {
+    background-color: rgba(0,0,0,0.02);
+}
+
+.status-available {
+    color: #198754;
+    font-weight: 600;
+}
+
+.status-busy {
+    color: #dc3545;
+    font-weight: 600;
+}
+
+.navbar-brand {
+    font-weight: bold;
+    font-size: 1.5rem;
+}
+
+.nav-link {
+    font-weight: 500;
+    margin: 0 5px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.nav-link:hover {
+    background-color: rgba(255,255,255,0.1);
+}
+
+.btn {
+    border-radius: 8px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.card-header {
+    border-radius: 15px 15px 0 0 !important;
+}
+
+.stat-card {
+    border-radius: 12px;
+    transition: all 0.3s ease;
+}
+
+.stat-card:hover {
+    transform: scale(1.05);
+}
+
+.courier-actions {
+    min-width: 200px;
+}
+
+.courier-actions .btn {
+    margin: 2px;
+}
+
+.badge {
+    font-size: 0.8rem;
+    padding: 6px 10px;
+    border-radius: 20px;
+}
+
+.progress {
+    height: 8px;
+    border-radius: 4px;
+}
+
+.modal-content {
+    border-radius: 15px;
+    border: none;
+}
+
+.form-control, .form-select {
+    border-radius: 8px;
+    border: 1px solid #dee2e6;
+    transition: all 0.3s ease;
+    padding: 0.375rem 0.75rem; /* Убедимся, что отступы одинаковы */
+    font-size: 1rem;
+    line-height: 1.5;
+    width: 100%; /* Убедимся, что ширина соответствует другим полям */
+}
+
+.form-control:focus, .form-select:focus {
+    box-shadow: 0 0 0 0.2rem rgba(0,123,255,0.25);
+    border-color: #86b7fe;
+    outline: none;
+}
+
+.alert {
+    border-radius: 10px;
+    border: none;
+}
+
+.table-sm td, .table-sm th {
+    padding: 0.5rem;
+}
+
+.courier-actions .d-flex {
+    flex-wrap: nowrap; /* Запрещает перенос строк */
+}
+
+
+
+
+
+/*к странице как стать курьером и home*/
+.min-vh-80 {
+    min-height: 80vh;
+}
+
+.hero-section h1 {
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+}
+
+.hero-section .lead {
+    font-size: 1.25rem;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+}
+
+.accordion-button:not(.collapsed) {
+    background-color: #f8f9fa;
+    color: #000;
+}
+
+.accordion-button:focus {
+    box-shadow: none;
+    border-color: rgba(0,0,0,.125);
+}

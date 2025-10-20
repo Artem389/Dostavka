@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Главная</title>
+    <style>
+        table { border-collapse: collapse; width: 100%; }
+        th, td { border: 1px solid black; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+    </style>
+</head>
+<body>
+<h1>Список назначенных заказов</h1>
+<table>
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Курьер ID</th>
+        <th>Заказ ID</th>
+        <th>Адрес кода</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="order : ${assignedOrders}">
+        <td th:text="${order.id}"></td>
+        <td th:text="${order.courierId}"></td>
+        <td th:text="${order.orderId}"></td>
+        <td th:text="${order.orderAddressCode}"></td>
+    </tr>
+    <tr th:if="${assignedOrders == null or #lists.isEmpty(assignedOrders)}">
+        <td colspan="4">Нет назначенных заказов</td>
+    </tr>
+    </tbody>
+</table>
+<a href="/assigned-orders">Перейти к таблице заказов</a>
+</body>
+</html>

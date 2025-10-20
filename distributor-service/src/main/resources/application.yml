@@ -1,0 +1,32 @@
+server:
+  port: 8083
+
+spring:
+  autoconfigure:
+    exclude: org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
+  cache:
+    type: caffeine
+  main:
+    allow-bean-definition-overriding: true
+  application:
+    name: distributor-service
+  datasource:
+    url: jdbc:postgresql://localhost:5432/Rasped_pr9
+    username: postgres
+    password: postgres
+  jpa:
+    hibernate:
+      ddl-auto: update
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka  # Если используете Eureka
+
+feign:
+  client:
+    config:
+      default:
+        loggerLevel: FULL
+logging:
+  level:
+    com.example.distributorservice.client: DEBUG

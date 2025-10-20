@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Назначенные заказы</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        a {
+            color: #007bff;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        .error {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+<h2>Таблица назначенных заказов</h2>
+
+<table>
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Курьер ID</th>
+        <th>Заказ ID</th>
+        <th>Адрес заказа (код)</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="order : ${assignedOrders}">
+        <td th:text="${order.id}"></td>
+        <td th:text="${order.courierId}"></td>
+        <td th:text="${order.orderId}"></td>
+        <td th:text="${order.orderAddressCode}"></td>
+    </tr>
+    <tr th:if="${#lists.isEmpty(assignedOrders)}">
+        <td colspan="4">Нет назначенных заказов</td>
+    </tr>
+    </tbody>
+</table>
+
+<div th:if="${errorMessage}" class="error" th:text="${errorMessage}"></div>
+
+<a href="/">Вернуться на главную</a>
+</body>
+</html>

@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FoodExpress - Управление продуктами</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+    <style>
+        .editable-row td {
+            padding: 0.5rem;
+        }
+        .editable-row input {
+            width: 100%;
+            padding: 0.25rem;
+        }
+    </style>
+</head>
+<body>
+<header class="bg-light py-3">
+    <div class="container">
+        <h1>🍔 FoodExpress</h1>
+        <a th:href="@{/}" class="btn btn-outline-primary">Вернуться на главную</a>
+    </div>
+</header>
+
+<main class="container my-5">
+    <h2>Управление продуктами</h2>
+    <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
+    <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}"></div>
+
+    <div class="mb-4">
+        <form th:action="@{/manage-products}" method="get">
+            <label for="restaurantId" class="form-label">Выберите ресторан:</label>
+            <select class="form-control" id="restaurantId" name="restaurantId" onchange="this.form.submit()">
+                <option value="">-- Выберите ресторан --</option>
+                <option th:each="restaurant : ${restaurants}"
+                        th:value="${restaurant.id}"
+                        th:text="${restaurant.name}"
+                        th:selected="${restaurant.id == restaurantId}"></option>
+            </select>
+        </form>
+    </div>
+
+    <div th:if="${restaurantId != null}">
+        <h3 th:text="'Продукты ресторана: ' + ${selectedRestaurant.name}"></h3>
+        <div class="card mb-4">
+            <div class="card-body">
+                <h4>Добавить новый продукт</h4>
+                <form th:action="@{/product/add}" method="post">
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                    <input type="hidden" name="restaurantId" th:value="${restaurantId}">
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Название:</label>
+                        <input type="text" class="form-control" id="name" name="name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Описание:</label>
+                        <textarea class="form-control" id="description" name="description"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="price" class="form-label">Цена:</label>
+                        <input type="number" step="0.01" class="form-control" id="price" name="price" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="calories" class="form-label">Калории:</label>
+                        <input type="number" class="form-control" id="calories" name="calories">
+                    </div>
+                    <div class="mb-3">
+                        <label for="proteins" class="form-label">Белки (г):</label>
+                        <input type="number" step="0.01" class="form-control" id="proteins" name="proteins">
+                    </div>
+                    <div class="mb-3">
+                        <label for="fats" class="form-label">Жиры (г):</label>
+                        <input type="number" step="0.01" class="form-control" id="fats" name="fats">
+                    </div>
+                    <div class="mb-3">
+                        <label for="carbohydrates" class="form-label">Углеводы (г):</label>
+                        <input type="number" step="0.01" class="form-control" id="carbohydrates" name="carbohydrates">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Добавить продукт</button>
+                </form>
+            </div>
+        </div>
+
+        <h4>Список продуктов</h4>
+        <table class="table table-striped" id="productsTable">
+            <thead>
+            <tr>
+                <th>Название</th>
+                <th>Описание</th>
+                <th>Цена</th>
+                <th>Калории</th>
+                <th>Белки (г)</th>
+                <th>Жиры (г)</th>
+                <th>Углеводы (г)</th>
+                <th>Действия</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="product : ${products}" class="product-row" th:id="'product-' + ${product.id}">
+                <td th:text="${product.name}">Название</td>
+                <td th:text="${product.description}">Описание</td>
+                <td th:text="${product.price} + ' ₽'">Цена</td>
+                <td th:text="${product.calories != null} ? ${product.calories} : '-'">Калории</td>
+                <td th:text="${product.proteins != null} ? ${product.proteins} : '-'">Белки</td>
+                <td th:text="${product.fats != null} ? ${product.fats} : '-'">Жиры</td>
+                <td th:text="${product.carbohydrates != null} ? ${product.carbohydrates} : '-'">Углеводы</td>
+                <td>
+                    <button class="btn btn-sm btn-outline-primary edit-btn" th:attr="data-id=${product.id}, data-restaurant-id=${restaurantId}">Редактировать</button>
+                    <a th:href="@{/product/delete/{id}(id=${product.id}, restaurantId=${restaurantId})}" class="btn btn-sm btn-outline-danger">Удалить</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</main>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    $(document).ready(function() {
+        var csrfToken = $("meta[name='_csrf']").attr("content");
+        var csrfHeader = $("meta[name='_csrf_header']").attr("content");
+        $('.edit-btn').click(function() {
+            var row = $(this).closest('tr');
+            var id = $(this).data('id');
+            var restaurantId = $(this).data('restaurant-id');
+            var cells = row.find('td:not(:last-child)');
+            var originalValues = cells.map(function() {
+                return $(this).text();
+            }).get();
+
+            // Скрыть кнопку "Редактировать" и показать "Сохранить" и "Отмена"
+            $(this).hide();
+            row.find('.btn-outline-danger').hide();
+            var saveBtn = $('<button class="btn btn-sm btn-success save-btn" data-id="' + id + '" data-restaurant-id="' + restaurantId + '">Сохранить</button>');
+            var cancelBtn = $('<button class="btn btn-sm btn-secondary cancel-btn">Отмена</button>');
+            row.find('td:last-child').append(saveBtn).append(cancelBtn);
+
+            // Преобразовать ячейки в поля ввода
+            cells.each(function(index) {
+                var value = originalValues[index];
+                var input;
+                if (index === 2) { // Цена
+                    input = $('<input type="number" step="0.01" class="form-control" value="' + (parseFloat(value.replace(' ₽', '')) || '') + '">');
+                } else if (index >= 3 && value !== '-') { // Калории, Белки, Жиры, Углеводы
+                    input = $('<input type="number" step="0.01" class="form-control" value="' + (parseFloat(value) || '') + '">');
+                } else {
+                    input = $('<input type="text" class="form-control" value="' + (value === '-' ? '' : value) + '">');
+                }
+                $(this).html(input);
+            });
+
+            // Обработчик "Сохранить"
+            saveBtn.click(function() {
+                var newValues = cells.map(function() {
+                    return $(this).find('input').val();
+                }).get();
+                var name = newValues[0];
+                var description = newValues[1];
+                var price = newValues[2];
+                var calories = newValues[3] !== '' ? newValues[3] : null;
+                var proteins = newValues[4] !== '' ? newValues[4] : null;
+                var fats = newValues[5] !== '' ? newValues[5] : null;
+                var carbohydrates = newValues[6] !== '' ? newValues[6] : null;
+
+                $.ajax({
+                    url: '/product/update',
+                    method: 'POST',
+                    beforeSend: function(xhr) {
+                        xhr.setRequestHeader(csrfHeader, csrfToken);
+                    },
+                    data: {
+                        id: id,
+                        restaurantId: restaurantId,
+                        name: name,
+                        description: description,
+                        price: price,
+                        calories: calories,
+                        proteins: proteins,
+                        fats: fats,
+                        carbohydrates: carbohydrates
+                    },
+                    success: function(response) {
+                        location.reload();
+                    },
+                    error: function(xhr) {
+                        alert('Ошибка при обновлении: ' + xhr.responseText);
+                        location.reload();
+                    }
+                });
+            });
+
+            // Обработчик "Отмена"
+            cancelBtn.click(function() {
+                cells.each(function(index) {
+                    $(this).text(originalValues[index]);
+                });
+                row.find('.edit-btn').show();
+                row.find('.btn-outline-danger').show();
+                row.find('.save-btn, .cancel-btn').remove();
+            });
+        });
+    });
+</script>
+</body>
+</html>

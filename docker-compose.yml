@@ -1,0 +1,131 @@
+  version: '3.8'
+  services:
+    config-server:
+      image: dostavka/config-server:1.0
+      ports:
+        - "8888:8888"
+      environment:
+        - SPRING_PROFILES_ACTIVE=default
+        - SPRING_CLOUD_CONFIG_SERVER_GIT_URI=https://github.com/Artem389/Microservices-Delivery-App.git
+        - SPRING_CLOUD_CONFIG_SERVER_GIT_DEFAULT-LABEL=main
+        - SPRING_CLOUD_CONFIG_SERVER_GIT_CLONE-ON-START=true
+        - SPRING_CLOUD_CONFIG_SERVER_GIT_FORCE-PULL=true
+      networks:
+        - dostavka-net
+
+    eureka-server:
+      image: dostavka/eureka-server:1.0
+      ports:
+        - "8761:8761"
+      depends_on:
+        - config-server
+      environment:
+        - SPRING_CLOUD_CONFIG_URI=http://config-server:8888
+        - SPRING_PROFILES_ACTIVE=default
+      networks:
+        - dostavka-net
+
+    postgres-db:
+      image: postgres:14
+      ports:
+        - "5432:5432"
+      environment:
+        - POSTGRES_DB=dostavka_db
+        - POSTGRES_USER=postgres
+        - POSTGRES_PASSWORD=postgres
+      volumes:
+        - db-data:/var/lib/postgresql/data
+      networks:
+        - dostavka-net
+
+    order-service:
+      image: dostavka/order-service:1.0
+      ports:
+        - "8082:8082"
+      depends_on:
+        - config-server
+        - eureka-server
+        - postgres-db
+      environment:
+        - SPRING_CLOUD_CONFIG_URI=http://config-server:8888
+        - SPRING_DATASOURCE_URL=jdbc:postgresql://localhost:5432/zakazi_pr9
+        - SPRING_DATASOURCE_USERNAME=postgres
+        - SPRING_DATASOURCE_PASSWORD=postgres
+        - SPRING_JPA_DATABASE_PLATFORM=org.hibernate.dialect.PostgreSQLDialect
+        - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+        - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka-server:8761/eureka/
+        - SPRING_PROFILES_ACTIVE=default
+      networks:
+        - dostavka-net
+
+    staff-service:
+      image: dostavka/staff-service:1.0
+      ports:
+        - "8081:8081"
+      depends_on:
+        - config-server
+        - eureka-server
+        - postgres-db
+      environment:
+        - SPRING_CLOUD_CONFIG_URI=http://config-server:8888
+        - SPRING_DATASOURCE_URL=jdbc:postgresql://localhost:5432/staff_pr9
+        - SPRING_DATASOURCE_USERNAME=postgres
+        - SPRING_DATASOURCE_PASSWORD=postgres
+        - SPRING_JPA_DATABASE_PLATFORM=org.hibernate.dialect.PostgreSQLDialect
+        - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+        - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka-server:8761/eureka/
+        - SPRING_PROFILES_ACTIVE=default
+      networks:
+        - dostavka-net
+
+    distributor-service:
+      image: dostavka/distributor-service:1.0
+      ports:
+        - "8083:8083"
+      depends_on:
+        - config-server
+        - eureka-server
+        - postgres-db
+      environment:
+        - SPRING_CLOUD_CONFIG_URI=http://config-server:8888
+        - SPRING_DATASOURCE_URL=jdbc:postgresql://localhost:5432/Rasped_pr9
+        - SPRING_DATASOURCE_USERNAME=postgres
+        - SPRING_DATASOURCE_PASSWORD=postgres
+        - SPRING_JPA_DATABASE_PLATFORM=org.hibernate.dialect.PostgreSQLDialect
+        - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+        - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka-server:8761/eureka/
+        - SPRING_PROFILES_ACTIVE=default
+      networks:
+        - dostavka-net
+
+    api-gateway:
+      image: dostavka/api-gateway:1.0
+      ports:
+        - "8080:8080"
+      depends_on:
+        - config-server
+        - eureka-server
+      environment:
+        - SPRING_CLOUD_CONFIG_URI=http://config-server:8888
+        - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka-server:8761/eureka/
+        - SPRING_PROFILES_ACTIVE=default
+      networks:
+        - dostavka-net
+
+    frontend-service:
+      image: dostavka/frontend-service:1.0
+      ports:
+        - "8084:8084"
+      depends_on:
+        - api-gateway
+      environment:
+        - API_GATEWAY_URL=http://api-gateway:8080
+      networks:
+        - dostavka-net
+
+  volumes:
+    db-data:
+
+  networks:
+    dostavka-net:
+      driver: bridge

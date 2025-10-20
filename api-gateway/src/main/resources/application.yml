@@ -1,0 +1,27 @@
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      routes:
+        - id: order-service
+          uri: lb://order-service
+          predicates:
+            - Path=/order-service/**
+        - id: staff-service
+          uri: lb://staff-service
+          predicates:
+            - Path=/staff-service/**
+        - id: frontend-service
+          uri: lb://frontend-service
+          predicates:
+            - Path=/, /home
+      discovery:
+        locator:
+          enabled: true
+server:
+  port: 8080
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
